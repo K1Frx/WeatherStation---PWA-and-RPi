@@ -1,0 +1,51 @@
+
+{% extends 'WeatherApp/base.html' %}
+
+{% block content %}
+    <div class="container-fluid" style="margin-top: 40px;">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-4 col-sm-12 col-xs-12" style="min-width: 50%"> 
+                   <div class="card p-4">    
+                       <div class="d-flex">
+                           <h6 class="flex-grow-1">Warsaw</h6>
+                           <h6>{{ record.date }}</h6>
+                       </div>
+                        
+                       <div class="d-flex flex-column temp mt-5 mb-3">
+                           <h1 class="mb-0 font-weight-bold" id="heading"> {{ record.temperature }}&deg;C </h1>
+                       </div>
+                       
+                       <div class="d-flex">
+                           <div class="temp-details flex-grow-1">
+                                <p class="my-1">------------</p>
+                                <p class="my-2">
+                                    <img src="https://cdn.onlinewebfonts.com/svg/img_262976.png" height="17px" >
+                                    <span> {{ record.pressure }} hPa</span>
+                                </p>
+                                <p class="my-3">------------</p>
+                           </div>
+                           
+                           <div>
+                                {% if record.date.hour > 19 or record.date.hour < 4 %}
+                                <img src="/static/images/night.png" width="100px">
+                                {% elif record.temperature > 40 %}
+                                <img src="/static/images/hot.png" width="100px">
+                                {% elif record.temperature > 25 %}
+                                <img src="/static/images/sun.png" width="100px">
+                                {% elif record.temperature > 12 %}
+                                <img src="/static/images/warm.png" width="100px">
+                                {% else %}
+                                <img src="/static/images/cold.png" width="100px">
+                                {% endif %}
+
+                           </div>
+                           
+                           
+                       </div>
+                        
+          
+                    </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

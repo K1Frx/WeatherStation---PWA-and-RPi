@@ -1,0 +1,26 @@
+{% extends 'WeatherApp/base.html' %}
+
+{% block content %}
+<table 
+  class="table table-hover .table-responsive table-striped" 
+  id="historyTable">
+    <thead>
+      <tr>
+        <th scope="col">No</th>
+        <th scope="col">Date</th>
+        <th scope="col">Temperature</th>
+        <th scope="col">Pressure</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for record in records %}
+        <tr>
+            <td>{{ record.id }}</td>
+            <td>{{ record.date }}</td>
+            <td>{{ record.temperature }}°C</td>
+            <td>{{ record.pressure }}hPa</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
