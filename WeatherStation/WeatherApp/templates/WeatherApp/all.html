@@ -1,26 +1,296 @@
 {% extends 'WeatherApp/base.html' %}
-
 {% block content %}
-<table 
-  class="table table-hover .table-responsive table-striped" 
-  id="historyTable">
-    <thead>
-      <tr>
-        <th scope="col">No</th>
-        <th scope="col">Date</th>
-        <th scope="col">Temperature</th>
-        <th scope="col">Pressure</th>
-      </tr>
-    </thead>
-    <tbody>
-        {% for record in records %}
-        <tr>
-            <td>{{ record.id }}</td>
-            <td>{{ record.date }}</td>
-            <td>{{ record.temperature }}°C</td>
-            <td>{{ record.pressure }}hPa</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-  </table>
+
+<div style="margin-top: 10px; text-align: center">
+
+  <p>{% if request.GET.start or request.GET.end or request.GET.min_temp or request.GET.max_temp or request.GET.min_press or request.GET.max_press %}
+    <b>Filters:</b><br>
+  {% endif %}
+  {% if request.GET.start %}
+    Start date: {{ request.GET.start }}<br>
+  {% endif %}
+
+  {% if request.GET.end %}
+    End date: {{ request.GET.end }}<br>
+  {% endif %}
+
+  {% if request.GET.min_temp %}
+    Minimum Temperature: {{ request.GET.min_temp }}°C<br>
+  {% endif %}
+
+  {% if request.GET.max_temp %}
+    Maximum Temperature: {{ request.GET.max_temp }}°C<br>
+  {% endif %}
+
+  {% if request.GET.min_press %}
+    Minimum Pressure: {{ request.GET.min_press }}hPa<br>
+  {% endif %}
+
+  {% if request.GET.max_press %}
+    Maximum Pressure: {{ request.GET.max_press }}hPa<br>
+  {% endif %}</p>
+  <button id="showFiltersButton" type="button" class="btn btn-secondary btn-sm" onclick="toggleFilterOptions()" style="margin-left: 10px; margin-bottom: 10px">Show Filters</button>
+  <div id="filterOptions" style="display: none; ">
+    <div>
+    <label for="start">Start date</label>
+    <input type="date" id="start" name="trip-start" style="margin-left: 10">
+    </div>
+    <div>
+    <label for="end">End date</label>
+    <input type="date" id="end" name="trip-start" style="margin-left: 6px">
+    </div>
+    <div>
+      <label for="min_temp">Minimal temperature</label>
+      <input type="text" id="min_temp" 
+      onkeypress="return (event.charCode >= 48 && event.charCode <= 57) ||  
+      event.charCode == 46 || event.charCode == 0 " id="min_temp" name="trip-start" style="margin-left: 20px">
+    </div>
+    <div>
+      <label for="max_temp">Maximum temperature</label>
+      <input type="text" 
+              id="max_temp"
+              onkeypress="return (event.charCode >= 48 && event.charCode <= 57) ||  
+              event.charCode == 46 || 
+              event.charCode == 0 " 
+              name="trip-start" 
+              style="margin-left: 7px">
+    </div>
+    <div>
+      <label for="min_press">Minimal pressure</label>
+      <input ttype="text" id="min_press"  
+      onkeypress="return (event.charCode >= 48 && event.charCode <= 57) ||  
+      event.charCode == 46 || event.charCode == 0 " name="trip-start" style="margin-left: 47px">
+    </div>
+    <div>
+      <label for="max_press">Maximum pressure</label>
+      <input type="text" 
+              id="max_press" 
+              onkeypress="return (event.charCode >= 48 && event.charCode <= 57) ||  
+              event.charCode == 46 ||  
+              event.charCode == 0" 
+              name="trip-start" 
+              style="margin-left: 35px">
+    </div>
+    <a id="reset" type="button" class="btn btn-primary btn-sm" href="/all">Reset</a>
+    <a id="filter" type="button" class="btn btn-primary btn-sm" style="margin-top: 4px; margin-bottom: 4px; margin-left: 325px" onclick="setFilters()">Filter</a>
+    </div>
+    <p id="information"></p>
+  <script>
+    function setFilters() {
+      var start = document.getElementById('start').value;
+      var end = document.getElementById('end').value;
+      var min_temp = document.getElementById('min_temp').value;
+      var max_temp = document.getElementById('max_temp').value;
+      var min_press = document.getElementById('min_press').value;
+      var max_press = document.getElementById('max_press').value;
+      var filter = "Showing records";
+      var url = "";
+      if(start !== ""){
+        url += "&start=" + start;
+        filter += " from " + start;
+      }
+      if(end !== ""){
+        url += "&end=" + end;
+        filter += " to " + end;
+      }
+      if(min_temp !== ""){
+        url += "&min_temp=" + min_temp;
+        filter += " minimal temperature " + min_temp + "°C"
+      }
+      if(max_temp !== ""){
+        url += "&max_temp=" + max_temp;
+        filter += " maximum temperature " + max_temp + "°C"
+      }
+      if(min_press !== ""){
+        url += "&min_press=" + min_press;
+        filter += " minimal pressure " + min_press + "hPa"
+      }
+      if(max_press !== ""){
+        url += "&max_press=" + max_press;
+        filter += " maximum pressure " + max_press + "hPa"
+      }
+      if(window.location.href.includes('?')){
+        window.location.href += url;
+        return window.location.href
+      }
+      else{
+        urlcopy = "?";
+        urlcopy += url;
+        window.location.href += urlcopy;
+        return window.location.href
+      }
+    }
+  </script>
+  <script>
+    function toggleFilterOptions() {
+      var filterOptions = document.getElementById("filterOptions");
+      var showFiltersButton = document.getElementById("showFiltersButton");
+
+      if (filterOptions.style.display === "none") {
+        filterOptions.style.display = "block";
+        showFiltersButton.textContent = "Hide Filters";
+      } else {
+        filterOptions.style.display = "none";
+        showFiltersButton.textContent = "Show Filters";
+      }
+    }
+  </script>
+  <script>
+    function setFiltersOnLoad(){
+      // Get the search parameters from the current URL
+      var searchParams = new URLSearchParams(window.location.search);
+
+      // Access individual query parameters
+      var start = searchParams.get("start");
+      var end = searchParams.get("end");
+      var min_temp = searchParams.get("min_temp");
+      var max_temp = searchParams.get("max_temp");
+      var min_press = searchParams.get("min_press");
+      var max_press = searchParams.get("max_press");
+
+      var filter = "Showing records";
+      if(start !== ""){
+        url += "&start=" + start;
+        filter += " from " + start;
+      }
+      if(end !== ""){
+        url += "&end=" + end;
+        filter += " to " + end;
+      }
+      if(min_temp !== ""){
+        url += "&min_temp=" + min_temp;
+        filter += " minimal temperature " + min_temp + "°C"
+      }
+      if(max_temp !== ""){
+        url += "&max_temp=" + max_temp;
+        filter += " maximum temperature " + max_temp + "°C"
+      }
+      if(min_press !== ""){
+        url += "&min_press=" + min_press;
+        filter += " minimal pressure " + min_press + "hPa"
+      }
+      if(max_press !== ""){
+        url += "&max_press=" + max_press;
+        filter += " maximum pressure " + max_press + "hPa"
+      }
+      document.getElementById('information').innerText = filter;
+    }
+  </script>
+  <script>
+    function noup(){
+      if(window.location.href.includes('?')){
+        window.location.href += '&orderby=id';
+      }
+      else{
+        window.location.href += "?orderby=id";
+      }
+    }
+  </script>
+  <script>
+    function nodown(){
+      if(window.location.href.includes('?')){
+        window.location.href += '&orderby=-id';
+      }
+      else{
+        window.location.href += "?orderby=-id";
+      }
+    }
+  </script>
+  <script>
+    function dateup(){
+      if(window.location.href.includes('?')){
+        window.location.href += '&orderby=date';
+      }
+      else{
+        window.location.href += "?orderby=date";
+      }
+    }
+  </script>
+  <script>
+    function datedown(){
+      if(window.location.href.includes('?')){
+        window.location.href += '&orderby=-date';
+      }
+      else{
+        window.location.href += "?orderby=-date";
+      }
+    }
+  </script>
+  <script>
+    function tempup(){
+      if(window.location.href.includes('?')){
+        window.location.href += '&orderby=temperature';
+      }
+      else{
+        window.location.href += "?orderby=temperature";
+      }
+    }
+  </script>
+  <script>
+    function tempdown(){
+      if(window.location.href.includes('?')){
+        window.location.href += '&orderby=-temperature';
+      }
+      else{
+        window.location.href += "?orderby=-temperature";
+      }
+    }
+  </script>
+  <script>
+    function pressup(){
+      if(window.location.href.includes('?')){
+        window.location.href += '&orderby=pressure';
+      }
+      else{
+        window.location.href += "?orderby=pressure";
+      }
+    }
+  </script>
+  <script>
+    function pressdown(){
+      if(window.location.href.includes('?')){
+        window.location.href += '&orderby=-pressure';
+      }
+      else{
+        window.location.href += "?orderby=-pressure";
+      }
+    }
+  </script>
+
+  
+    <table class="table table-hover .table-responsive table-striped" 
+      id="historyTable"
+      style="margin-top: 10px;"
+      onload="setFiltersOnLoad()">
+        <thead>
+          <tr>
+            <th scope="col">No<br>
+              <a id="no_up" onclick="noup()">↑</a>
+              <a id="no_down" onclick ="nodown()">↓</a></th>
+            <th scope="col">Date<br>
+              <a id="date_up" onclick="dateup()">↑</a>
+              <a id="date_down" onclick="datedown()">↓</a></th>
+            </th>
+            <th scope="col">Temperature<br>
+              <a id="temp_up" onclick="tempup()">↑</a>
+              <a id="temp_down" onclick="tempdown()">↓</a></th>
+            </th>
+            <th scope="col">Pressure<br>
+              <a id="press_up" onclick="pressup()">↑</a>
+              <a id="press_down" onclick="pressdown()">↓</a></th>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+            <tr>
+                <td>{{ record.id }}</td>
+                <td>{{ record.date }}</td>
+                <td>{{ record.temperature }}°C</td>
+                <td>{{ record.pressure }}hPa</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+</div>
 {% endblock %}

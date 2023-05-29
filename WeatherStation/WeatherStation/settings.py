@@ -27,12 +27,12 @@ SECRET_KEY = 'django-insecure-e%7q+vl_*p7&lg^v08mhg(%b2&yx0gei!1mj5q+wzf3=@g)wps
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.0.106', '127.0.0.1', '172.20.10.3']
+ALLOWED_HOSTS = ['192.168.0.106', '127.0.0.1', '172.20.10.3', '192.168.31.6']
 
 #192.168.0.106 - siec domowa na Jedlance
 #127.0.0.1 - srodowisko testowe
 #172.20.10.3 - wifi z iphone
-
+#192.168.31.6 - wifi z Redmi
 
 # Application definition
 
