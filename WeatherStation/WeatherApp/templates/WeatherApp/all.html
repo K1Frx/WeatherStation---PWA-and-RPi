@@ -2,7 +2,6 @@
 {% block content %}
 
 <div style="margin-top: 10px; text-align: center">
-
   <p>{% if request.GET.start or request.GET.end or request.GET.min_temp or request.GET.max_temp or request.GET.min_press or request.GET.max_press %}
     <b>Filters:</b><br>
   {% endif %}
@@ -33,48 +32,61 @@
   <div id="filterOptions" style="display: none; ">
     <div>
     <label for="start">Start date</label>
-    <input type="date" id="start" name="trip-start" style="margin-left: 10">
+    <input type="date" id="start" name="trip-start" style="margin-left: 10; margin-top: 5px;">
     </div>
     <div>
     <label for="end">End date</label>
-    <input type="date" id="end" name="trip-start" style="margin-left: 6px">
+    <input type="date" id="end" name="trip-start" style="margin-left: 6px; margin-top: 5px;">
     </div>
     <div>
       <label for="min_temp">Minimal temperature</label>
+      </div>
+      <div>
       <input type="text" id="min_temp" 
       onkeypress="return (event.charCode >= 48 && event.charCode <= 57) ||  
-      event.charCode == 46 || event.charCode == 0 " id="min_temp" name="trip-start" style="margin-left: 20px">
+      event.charCode == 46 || event.charCode == 0" id="min_temp" name="trip-start" style="margin-top: 5px;" ontouchstart="" oninput="return (event.charCode >= 48 && event.charCode <= 57) ||  
+      event.charCode == 46 || event.charCode == 0">
     </div>
     <div>
       <label for="max_temp">Maximum temperature</label>
+      </div>
+      <div>
       <input type="text" 
               id="max_temp"
               onkeypress="return (event.charCode >= 48 && event.charCode <= 57) ||  
               event.charCode == 46 || 
-              event.charCode == 0 " 
+              event.charCode == 0" 
               name="trip-start" 
-              style="margin-left: 7px">
+              style="margin-top: 5px;">
     </div>
     <div>
-      <label for="min_press">Minimal pressure</label>
-      <input ttype="text" id="min_press"  
-      onkeypress="return (event.charCode >= 48 && event.charCode <= 57) ||  
-      event.charCode == 46 || event.charCode == 0 " name="trip-start" style="margin-left: 47px">
+      <label for="min_press">Minimal pressure<br></label>
     </div>
     <div>
-      <label for="max_press">Maximum pressure</label>
+      <input type="text" 
+              id="min_press"
+              onkeypress="return (event.charCode >= 48 && event.charCode <= 57) ||  
+              event.charCode == 46 || 
+              event.charCode == 0" 
+              name="trip-start" 
+              style="margin-top: 5px;">
+    </div>
+    <div>
+      <label for="max_press">Maximum pressure<br></label>
+    </div>
+    <div>
       <input type="text" 
               id="max_press" 
               onkeypress="return (event.charCode >= 48 && event.charCode <= 57) ||  
               event.charCode == 46 ||  
               event.charCode == 0" 
               name="trip-start" 
-              style="margin-left: 35px">
+              style="margin-top: 5px;">
     </div>
     <a id="reset" type="button" class="btn btn-primary btn-sm" href="/all">Reset</a>
-    <a id="filter" type="button" class="btn btn-primary btn-sm" style="margin-top: 4px; margin-bottom: 4px; margin-left: 325px" onclick="setFilters()">Filter</a>
-    </div>
-    <p id="information"></p>
+    <a id="filter" type="button" class="btn btn-primary btn-sm" style="margin-top: 4px; margin-bottom: 4px; margin-left: 230px" onclick="setFilters()">Filter</a>
+  </div>
+</div>
   <script>
     function setFilters() {
       var start = document.getElementById('start').value;
@@ -85,7 +97,7 @@
       var max_press = document.getElementById('max_press').value;
       var filter = "Showing records";
       var url = "";
-      if(start !== ""){
+      if(start !== ""                                                                                                                                                                                                                                                      ){
         url += "&start=" + start;
         filter += " from " + start;
       }
@@ -256,8 +268,24 @@
       }
     }
   </script>
-
-  
+  <script>
+    function download(){
+      if(window.location.href.includes('?')){
+        var args = window.location.href.split('?')[1];
+        var url = window.location.href.split('?')[0];
+        var new_url = url + "export/?" + args;
+        window.location.href = new_url;
+      }
+      else{
+        var url = window.location.href.split('?')[0];
+        var new_url = url + "export";
+        window.location.href = new_url;
+      }
+    }
+  </script>
+  <div style="margin-top: 10px; text-align: center">
+    <button id="download" onclick="download()" type="button" class="btn btn-primary btn-sm" style="margin-left: 10px; text-align: center;">Download</button>
+  </div>
     <table class="table table-hover .table-responsive table-striped" 
       id="historyTable"
       style="margin-top: 10px;"
@@ -265,19 +293,19 @@
         <thead>
           <tr>
             <th scope="col">No<br>
-              <a id="no_up" onclick="noup()">↑</a>
-              <a id="no_down" onclick ="nodown()">↓</a></th>
+              <a id="no_up" onclick="noup()" style="cursor: pointer; color:blue;">↑</a>
+              <a id="no_down" onclick ="nodown()" style="cursor: pointer; color:blue;">↓</a></th>
             <th scope="col">Date<br>
-              <a id="date_up" onclick="dateup()">↑</a>
-              <a id="date_down" onclick="datedown()">↓</a></th>
+              <a id="date_up" onclick="dateup()" style="cursor: pointer; color:blue;">↑</a>
+              <a id="date_down" onclick="datedown()" style="cursor: pointer; color:blue;">↓</a></th>
             </th>
             <th scope="col">Temperature<br>
-              <a id="temp_up" onclick="tempup()">↑</a>
-              <a id="temp_down" onclick="tempdown()">↓</a></th>
+              <a id="temp_up" onclick="tempup()" style="cursor: pointer; color:blue;">↑</a>
+              <a id="temp_down" onclick="tempdown()" style="cursor: pointer; color:blue;">↓</a></th>
             </th>
             <th scope="col">Pressure<br>
-              <a id="press_up" onclick="pressup()">↑</a>
-              <a id="press_down" onclick="pressdown()">↓</a></th>
+              <a id="press_up" onclick="pressup()" style="cursor: pointer; color:blue;">↑</a>
+              <a id="press_down" onclick="pressdown()" style="cursor: pointer; color:blue;">↓</a></th>
             </th>
           </tr>
         </thead>

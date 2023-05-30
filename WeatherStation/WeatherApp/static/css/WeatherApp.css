@@ -31,3 +31,8 @@ html, body{
 *:focus{
     outline: none;
 }
+
+.arrow-link {
+    cursor: pointer;
+    color: blue;
+}

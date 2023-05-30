@@ -1,9 +1,64 @@
 {% extends 'WeatherApp/base.html' %}
 
 {% block content %}
-<div style="margin-top: 10px; margin-left: 10px;">
-    <a href=type="button" class="btn btn-secondary btn-sm">24h</a>
-    <a type="button" class="btn btn-secondary btn-sm">7d</a>
-    <a type="button" class="btn btn-secondary btn-sm">30d</a>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div style="margin-top: 10px; margin-left: 10px; display: flex; justify-content: center;">
+    <a href="?type=24h" class="btn btn-primary btn-sm" style="margin-left: 5px; margin-right: 5px;">24h</a>
+    <a href="?type=7d" class="btn btn-primary btn-sm" style="margin-left: 5px; margin-right: 5px;">7d</a>
+    <a href="?type=30d" class="btn btn-primary btn-sm" style="margin-left: 5px; margin-right: 5px;">30d</a>
 </div>
+<div style="margin-top: 10px; text-align: center">
+    {% if request.GET.type %}
+        Graphs show data from {{ request.GET.type }}<br>
+    {% endif %}
+</div>
+<div style="display: flex; justify-content: center; margin-top: 10px;">
+    <canvas style="max-width: 1400px; max-height: 600px;" id="temperatureChart"></canvas>
+</div>
+<div style="display: flex; justify-content: center; margin-top: 10px;">
+    <canvas style="max-width: 1400px; max-height: 600px;" id="pressureChart"></canvas>
+</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var temperatureCtx = document.getElementById('temperatureChart').getContext('2d');
+            var pressureCtx = document.getElementById('pressureChart').getContext('2d');
+
+            var temperatureData = JSON.parse('{{ temperatures|safe|escapejs }}');
+            var pressureData = JSON.parse('{{ pressures|safe|escapejs }}');
+            var dateLabels = JSON.parse('{{ dates|safe|escapejs }}');
+
+            var temperatureChart = new Chart(temperatureCtx, {
+                type: 'line',
+                data: {
+                    labels: dateLabels,
+                    datasets: [{
+                        label: 'Temperature [°C]',
+                        data: temperatureData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {}
+            });
+
+            var pressureChart = new Chart(pressureCtx, {
+                type: 'line',
+                data: {
+                    labels: dateLabels,
+                    datasets: [{
+                        label: 'Pressure [hPa]',
+                        data: pressureData,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {}
+            });
+        });
+    </script>
+
 {% endblock %}
