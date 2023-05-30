@@ -1,8 +1,9 @@
 {% extends 'WeatherApp/base.html' %}
+
 {% block content %}
 
 <div style="margin-top: 10px; text-align: center">
-  <p>{% if request.GET.start or request.GET.end or request.GET.min_temp or request.GET.max_temp or request.GET.min_press or request.GET.max_press %}
+  <p>{% if request.GET.start or request.GET.end or request.GET.min_temp or request.GET.max_temp or request.GET.min_press or request.GET.max_press or request.GET.orderby %}
     <b>Filters:</b><br>
   {% endif %}
   {% if request.GET.start %}
@@ -27,16 +28,21 @@
 
   {% if request.GET.max_press %}
     Maximum Pressure: {{ request.GET.max_press }}hPa<br>
+  {% endif %}
+
+  {% if request.GET.orderby %} 
+    Ordered by: {{ request.GET.orderby }}
   {% endif %}</p>
-  <button id="showFiltersButton" type="button" class="btn btn-secondary btn-sm" onclick="toggleFilterOptions()" style="margin-left: 10px; margin-bottom: 10px">Show Filters</button>
+  <button id="showFiltersButton" type="button" class="btn btn-secondary btn-sm" onclick="toggleFilterOptions()" style="margin-bottom: 10px">Show Filters</button>
+  <button id="download" onclick="download()" type="button" class="btn btn-secondary btn-sm" style="margin-left: 10px; margin-bottom: 10px">Download</button>
   <div id="filterOptions" style="display: none; ">
     <div>
     <label for="start">Start date</label>
-    <input type="date" id="start" name="trip-start" style="margin-left: 10; margin-top: 5px;">
+    <input type="date" id="start" name="trip-start" style="margin-bottom: 5px;">
     </div>
     <div>
     <label for="end">End date</label>
-    <input type="date" id="end" name="trip-start" style="margin-left: 6px; margin-top: 5px;">
+    <input type="date" id="end" name="trip-start" style="margin-bottom: 5px;">
     </div>
     <div>
       <label for="min_temp">Minimal temperature</label>
@@ -44,7 +50,7 @@
       <div>
       <input type="text" id="min_temp" 
       onkeypress="return (event.charCode >= 48 && event.charCode <= 57) ||  
-      event.charCode == 46 || event.charCode == 0" id="min_temp" name="trip-start" style="margin-top: 5px;" ontouchstart="" oninput="return (event.charCode >= 48 && event.charCode <= 57) ||  
+      event.charCode == 46 || event.charCode == 0" id="min_temp" name="trip-start" style="margin-bottom: 5px;" ontouchstart="" oninput="return (event.charCode >= 48 && event.charCode <= 57) ||  
       event.charCode == 46 || event.charCode == 0">
     </div>
     <div>
@@ -57,7 +63,7 @@
               event.charCode == 46 || 
               event.charCode == 0" 
               name="trip-start" 
-              style="margin-top: 5px;">
+              style="margin-bottom: 5px;">
     </div>
     <div>
       <label for="min_press">Minimal pressure<br></label>
@@ -69,7 +75,7 @@
               event.charCode == 46 || 
               event.charCode == 0" 
               name="trip-start" 
-              style="margin-top: 5px;">
+              style="margin-bottom: 5px;">
     </div>
     <div>
       <label for="max_press">Maximum pressure<br></label>
@@ -81,10 +87,10 @@
               event.charCode == 46 ||  
               event.charCode == 0" 
               name="trip-start" 
-              style="margin-top: 5px;">
+              style="margin-bottom: 5px;">
     </div>
     <a id="reset" type="button" class="btn btn-primary btn-sm" href="/all">Reset</a>
-    <a id="filter" type="button" class="btn btn-primary btn-sm" style="margin-top: 4px; margin-bottom: 4px; margin-left: 230px" onclick="setFilters()">Filter</a>
+    <button id="filter" type="button" class="btn btn-primary btn-sm" style="margin-top: 4px; margin-bottom: 4px; margin-left: 200px" onclick="setFilters()">Filter</button>
   </div>
 </div>
   <script>
@@ -284,8 +290,29 @@
     }
   </script>
   <div style="margin-top: 10px; text-align: center">
-    <button id="download" onclick="download()" type="button" class="btn btn-primary btn-sm" style="margin-left: 10px; text-align: center;">Download</button>
+    <button id="download" onclick="download()" type="button" class="btn btn-primary btn-sm" style="text-align: center;">Download</button>
   </div>
+
+        
+  <style>
+    .record-row {
+      position: relative;
+    }
+
+    .record-row:hover::after {
+      content: attr(data-details);
+      position: absolute;
+      top: 100%;
+      left: 0;
+      display: block;
+      padding: 10px;
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      z-index: 9999;
+}
+  </style>
+
     <table class="table table-hover .table-responsive table-striped" 
       id="historyTable"
       style="margin-top: 10px;"
@@ -311,14 +338,21 @@
         </thead>
         <tbody>
             {% for record in records %}
-            <tr>
-                <td>{{ record.id }}</td>
-                <td>{{ record.date }}</td>
-                <td>{{ record.temperature }}°C</td>
-                <td>{{ record.pressure }}hPa</td>
-            </tr>
+              {% if record.comment %}
+              <tr class="record-row" data-details="{{ record.comment }}">
+                  <td>{{ record.id }}©</td>
+              {% else %}
+              <tr>
+                  <td>{{ record.id }}</td>
+              {% endif %}
+                  <td>{{ record.date }}</td>
+                  <td>{{ record.temperature }}°C</td>
+                  <td>{{ record.pressure }}hPa</td>
+              </tr>
             {% endfor %}
         </tbody>
       </table>
+
+
 </div>
 {% endblock %}

@@ -65,11 +65,11 @@ def export(request):
     writer = csv.writer(response)
 
     # Write the header row
-    writer.writerow(['id', 'date', 'temperature', 'pressure'])  # Replace with your actual column names
+    writer.writerow(['id', 'date', 'temperature', 'pressure', 'comment'])  # Replace with your actual column names
 
     # Write the data rows
     for row in records:
-        writer.writerow([row.id, row.date, row.temperature, row.pressure])  # Replace with your actual column names
+        writer.writerow([row.id, row.date, row.temperature, row.pressure, row.comment])  # Replace with your actual column names
 
     return response
 
