@@ -35,64 +35,43 @@
   {% endif %}</p>
   <button id="showFiltersButton" type="button" class="btn btn-secondary btn-sm" onclick="toggleFilterOptions()" style="margin-bottom: 10px">Show Filters</button>
   <button id="download" onclick="download()" type="button" class="btn btn-secondary btn-sm" style="margin-left: 10px; margin-bottom: 10px">Download</button>
-  <div id="filterOptions" style="display: none; ">
+  <div id="filterOptions" style="display: none;">
     <div>
-    <label for="start">Start date</label>
-    <input type="date" id="start" name="trip-start" style="margin-bottom: 5px;">
+      <label for="start">Start date</label>
+      <input type="date" id="start" name="trip-start" style="margin-bottom: 5px;">
     </div>
     <div>
-    <label for="end">End date</label>
-    <input type="date" id="end" name="trip-start" style="margin-bottom: 5px;">
+      <label for="end">End date</label>
+      <input type="date" id="end" name="trip-start" style="margin-bottom: 5px;">
     </div>
     <div>
       <label for="min_temp">Minimal temperature</label>
-      </div>
-      <div>
-      <input type="text" id="min_temp" 
-      onkeypress="return (event.charCode >= 48 && event.charCode <= 57) ||  
-      event.charCode == 46 || event.charCode == 0" id="min_temp" name="trip-start" style="margin-bottom: 5px;" ontouchstart="" oninput="return (event.charCode >= 48 && event.charCode <= 57) ||  
-      event.charCode == 46 || event.charCode == 0">
+    </div>
+    <div>
+      <input type="number" step="0.1" id="min_temp" name="trip-start" style="margin-bottom: 5px;">
     </div>
     <div>
       <label for="max_temp">Maximum temperature</label>
-      </div>
-      <div>
-      <input type="text" 
-              id="max_temp"
-              onkeypress="return (event.charCode >= 48 && event.charCode <= 57) ||  
-              event.charCode == 46 || 
-              event.charCode == 0" 
-              name="trip-start" 
-              style="margin-bottom: 5px;">
     </div>
     <div>
-      <label for="min_press">Minimal pressure<br></label>
+      <input type="number" step="0.1" id="max_temp" name="trip-start" style="margin-bottom: 5px;">
     </div>
     <div>
-      <input type="text" 
-              id="min_press"
-              onkeypress="return (event.charCode >= 48 && event.charCode <= 57) ||  
-              event.charCode == 46 || 
-              event.charCode == 0" 
-              name="trip-start" 
-              style="margin-bottom: 5px;">
+      <label for="min_press">Minimal pressure</label>
     </div>
     <div>
-      <label for="max_press">Maximum pressure<br></label>
+      <input type="number" step="0.1" id="min_press" name="trip-start" style="margin-bottom: 5px;">
     </div>
     <div>
-      <input type="text" 
-              id="max_press" 
-              onkeypress="return (event.charCode >= 48 && event.charCode <= 57) ||  
-              event.charCode == 46 ||  
-              event.charCode == 0" 
-              name="trip-start" 
-              style="margin-bottom: 5px;">
+      <label for="max_press">Maximum pressure</label>
+    </div>
+    <div>
+      <input type="number" step="0.1" id="max_press" name="trip-start" style="margin-bottom: 5px;">
     </div>
     <a id="reset" type="button" class="btn btn-primary btn-sm" href="/all">Reset</a>
     <button id="filter" type="button" class="btn btn-primary btn-sm" style="margin-top: 4px; margin-bottom: 4px; margin-left: 200px" onclick="setFilters()">Filter</button>
   </div>
-</div>
+  </div>
   <script>
     function setFilters() {
       var start = document.getElementById('start').value;
@@ -103,7 +82,7 @@
       var max_press = document.getElementById('max_press').value;
       var filter = "Showing records";
       var url = "";
-      if(start !== ""                                                                                                                                                                                                                                                      ){
+      if(start !== ""){                                                                                                                                                                                                                                                   
         url += "&start=" + start;
         filter += " from " + start;
       }
@@ -289,10 +268,6 @@
       }
     }
   </script>
-  <div style="margin-top: 10px; text-align: center">
-    <button id="download" onclick="download()" type="button" class="btn btn-primary btn-sm" style="text-align: center;">Download</button>
-  </div>
-
         
   <style>
     .record-row {
@@ -302,8 +277,8 @@
     .record-row:hover::after {
       content: attr(data-details);
       position: absolute;
-      top: 100%;
-      left: 0;
+      top: -40%;
+      left: 62%;
       display: block;
       padding: 10px;
       background-color: #f0f0f0;
@@ -340,14 +315,18 @@
             {% for record in records %}
               {% if record.comment %}
               <tr class="record-row" data-details="{{ record.comment }}">
-                  <td>{{ record.id }}©</td>
+
+                  <td>{{ record.id }}</td>
+                  <td>{{ record.date }}</td>
+                  <td>{{ record.temperature }}°C<img src="/static/images/comment.png" width="17px" style="margin-left: 10px"></td>
+                  <td>{{ record.pressure }}hPa</td>
               {% else %}
               <tr>
                   <td>{{ record.id }}</td>
-              {% endif %}
                   <td>{{ record.date }}</td>
                   <td>{{ record.temperature }}°C</td>
                   <td>{{ record.pressure }}hPa</td>
+                {% endif %}
               </tr>
             {% endfor %}
         </tbody>
